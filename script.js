@@ -2,6 +2,11 @@
 const copyIcon = document.getElementById("color-icon");
 const hexInput = document.getElementById("hex-input");
 const colorHeader = document.getElementById("color-header");
+const historyDiv = document.getElementById("history");
+const historyHeader = document.getElementById("color-history");
+
+// Hex Code History
+let hexHistoryCount = 0;
 
 // Function to determine if on mobile or not. Stolen from detectmobilebrowsers.com.
 window.mobileAndTabletCheck = function () {
@@ -46,7 +51,8 @@ const hexCodeGeneration = () => {
     // Because Green and Red are lighter in the human eye, we give those values a higher weight.
     const luminesence = Math.round(((rgb[0] * 0.299) + (rgb[1] * 0.587) + (rgb[2] * 0.114)) / 255);
 
-    updateDom(hex, luminesence)
+    hexHistoryCount++;
+    updateDom(hex, luminesence, true);
 }
 
 // Convert Two Digit Number Function
@@ -60,7 +66,7 @@ const convertNum = (num) => {
 }
 
 // Populate DOM with Hex Function
-const updateDom = (hex, lumi) => {
+const updateDom = (hex, lumi, newHex) => {
     // Luminesence is rounded to be either 0 or 1.
     let textColorClass = lumi ? "dark-text" : "light-text";
 
@@ -70,6 +76,30 @@ const updateDom = (hex, lumi) => {
     hexInput.setAttribute("class", textColorClass);
     colorHeader.setAttribute("class", textColorClass);
     copyIcon.setAttribute("class", `${textColorClass} fa-solid fa-copy`);
+
+    let children = historyDiv.childNodes;
+
+    if (newHex) {
+        for (let i = 0; i < children.length; i++) {
+            children[i].setAttribute("style", "");
+        }
+
+        let pTag = document.createElement("p");
+        pTag.innerText = "#" + hex;
+        pTag.setAttribute("class", "history-element");
+        pTag.addEventListener("click", () => {
+            for (let i = 0; i < children.length; i++) {
+                children[i].setAttribute("style", "");
+            }
+            pTag.setAttribute("style", "color: #ff6347");
+            updateDom(hex, lumi, false);
+        });
+        historyDiv.appendChild(pTag);
+
+        if (hexHistoryCount > 9) {
+            historyDiv.removeChild(historyDiv.firstChild)
+        }
+    }
 }
 
 // Event Listener for Changing Color and Copying
@@ -93,6 +123,18 @@ document.getElementById("color-wrapper").addEventListener("click", (e) => {
 
     // Generate a new hex code.
     hexCodeGeneration()
+});
+
+historyHeader.addEventListener("click", () => {
+    const classes = historyDiv.getAttribute("class");
+
+    if (classes.search("display-none") !== -1) {
+        historyDiv.setAttribute("class", "bottom-header");
+        historyHeader.setAttribute("style", "color: #ff6347");
+    } else {
+        historyDiv.setAttribute("class", "bottom-header display-none");
+        historyHeader.setAttribute("style", "")
+    }
 });
 
 // Random Color on Load

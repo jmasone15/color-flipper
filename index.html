@@ -11,20 +11,26 @@
 </head>
 
 <body>
-    <nav>
-        <section>
-            <p>Color Flipper</p>
-        </section>
-        <section>
-            <a href="https://github.com/jmasone15/color-flipper" target="_blank">
-                <img src="./images/25231.png" alt="jmasone15">
-            </a>
-        </section>
-    </nav>
+    <header>
+        <nav class="top-header">
+            <section>
+                <p>Color Flipper</p>
+            </section>
+            <section class="right-nav">
+                <p id="color-history">History</p>
+                <p id="color-saved">Saved</p>
+                <a href="https://github.com/jmasone15/color-flipper" target="_blank">
+                    <img src="./images/25231.png" alt="jmasone15">
+                </a>
+            </section>
+        </nav>
+        <nav class="bottom-header display-none" id="history"></nav>
+        <nav class="bottom-header display-none" id="saved"></nav>
+    </header>
 
     <main id="color-wrapper">
         <h1 id="color-header">Click Anywhere to Generate a Random Color</h1>
-        <div>
+        <div class="hex-box">
             <input type="text" disabled id="hex-input">
             <i id="color-icon"></i>
         </div>

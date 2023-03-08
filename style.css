@@ -4,18 +4,34 @@ html, body {
     font-family: 'Courier New', Courier, monospace;
 }
 
-nav {
+header {
     display: flex;
+    flex-direction: column;
     background-color: white;
+}
+
+.top-header {
+    display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     padding: 5px 10px;
+}
+
+.bottom-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 img {
     height: 35px;
     width: 35px;
     cursor: pointer;
+}
+
+img:hover {
+    transform: scale(1.1);
 }
 
 p {
@@ -34,7 +50,7 @@ main {
     user-select: none;
 }
 
-div {
+.hex-box {
     display: flex;
     width: 99%;
     justify-content: center;
@@ -63,4 +79,39 @@ i {
 
 .dark-text {
     color: rgb(18, 18, 18);
+}
+
+.right-nav {
+    display: flex;
+    width: 25%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.right-nav p {
+    cursor: pointer;
+}
+
+.right-nav p:hover {
+    color: #ff6347;
+    transform: scale(1.1);
+}
+
+.display-none {
+    display: none;
+}
+
+.box {
+    display: flex;
+}
+
+.history-element {
+    padding: 0px 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.history-element:hover {
+    color: #ff6347;
+    transform: scale(1.1);
 }
