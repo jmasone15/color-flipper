@@ -31,6 +31,7 @@ main {
     justify-content: center;
     height: 90%;
     text-align: center;
+    user-select: none;
 }
 
 div {
