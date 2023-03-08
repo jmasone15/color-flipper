@@ -1,3 +1,52 @@
-body {
+html, body {
     margin: 0;
+    height: 100%;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+nav {
+    display: flex;
+    background-color: white;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+}
+
+img {
+    height: 35px;
+    width: 35px;
+    cursor: pointer;
+}
+
+p {
+    font-size: 25px;
+    margin: 0;
+    color: #fff9f9;
+}
+
+main {
+    display: flex;
+    flex: 0, 1, auto;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 90%;
+}
+
+div {
+    display: flex;
+    width: 99%;
+    justify-content: center;
+}
+
+input {
+    margin-right: 10px;
+}
+
+.light-text {
+    color: #fff;
+}
+
+.dark-text {
+    color: rgb(18, 18, 18);
 }
