@@ -81,20 +81,21 @@ const updateDom = (hex, lumi, newHex) => {
 
     if (newHex) {
         for (let i = 0; i < children.length; i++) {
-            children[i].setAttribute("style", "");
+            children[i].setAttribute("class", "history-element");
         }
 
-        let pTag = document.createElement("p");
-        pTag.innerText = "#" + hex;
-        pTag.setAttribute("class", "history-element");
-        pTag.addEventListener("click", () => {
+        let colorSquare = document.createElement("div");
+        colorSquare.setAttribute("alt", `#${hex}`);
+        colorSquare.setAttribute("style", `background-color: #${hex}`);
+        colorSquare.setAttribute("class", "history-element");
+        colorSquare.addEventListener("click", () => {
             for (let i = 0; i < children.length; i++) {
-                children[i].setAttribute("style", "");
+                children[i].setAttribute("class", "history-element");
             }
-            pTag.setAttribute("style", "color: #ff6347");
+            colorSquare.setAttribute("class", "history-element-highlighted");
             updateDom(hex, lumi, false);
         });
-        historyDiv.appendChild(pTag);
+        historyDiv.appendChild(colorSquare);
 
         if (hexHistoryCount > 9) {
             historyDiv.removeChild(historyDiv.firstChild)

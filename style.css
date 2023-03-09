@@ -106,12 +106,23 @@ i {
 }
 
 .history-element {
-    padding: 0px 10px;
-    font-size: 20px;
+    margin: 5px 10px;
+    border: 1px solid black;
     cursor: pointer;
+    width: 15px;
+    height: 15px;
+}
+
+.history-element-highlighted {
+    margin: 0px 10px;
+    border: 2px solid #ff6347;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    margin: 5px 10px;
 }
 
 .history-element:hover {
-    color: #ff6347;
+    border: 1px solid #ff6347;
     transform: scale(1.1);
 }
