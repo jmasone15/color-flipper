@@ -1,12 +1,16 @@
 // DOM Elements
 const copyIcon = document.getElementById("color-icon");
+const saveIcon = document.getElementById("save-icon");
 const hexInput = document.getElementById("hex-input");
 const colorHeader = document.getElementById("color-header");
 const historyDiv = document.getElementById("history");
 const historyHeader = document.getElementById("color-history");
+const savedDiv = document.getElementById("saved");
+const savedHeader = document.getElementById("color-saved");
 
 // Hex Code History
 let hexHistoryCount = 0;
+const existingSaved = JSON.parse(localStorage.getItem("saved"));
 
 // Function to determine if on mobile or not. Stolen from detectmobilebrowsers.com.
 window.mobileAndTabletCheck = function () {
@@ -52,7 +56,7 @@ const hexCodeGeneration = () => {
     const luminesence = Math.round(((rgb[0] * 0.299) + (rgb[1] * 0.587) + (rgb[2] * 0.114)) / 255);
 
     hexHistoryCount++;
-    updateDom(hex, luminesence, true);
+    updateDom(hex, luminesence, true, false);
 }
 
 // Convert Two Digit Number Function
@@ -66,7 +70,7 @@ const convertNum = (num) => {
 }
 
 // Populate DOM with Hex Function
-const updateDom = (hex, lumi, newHex) => {
+const updateDom = (hex, lumi, newHex, isSave) => {
     // Luminesence is rounded to be either 0 or 1.
     let textColorClass = lumi ? "dark-text" : "light-text";
 
@@ -74,14 +78,24 @@ const updateDom = (hex, lumi, newHex) => {
     document.body.style.backgroundColor = "#" + hex;
     hexInput.value = "#" + hex;
     hexInput.setAttribute("class", textColorClass);
+    hexInput.setAttribute("lumi", lumi);
     colorHeader.setAttribute("class", textColorClass);
     copyIcon.setAttribute("class", `${textColorClass} fa-solid fa-copy`);
+    if (isSave) {
+        saveIcon.setAttribute("class", `${textColorClass} fa-solid fa-times`);
+    } else {
+        saveIcon.setAttribute("class", `${textColorClass} fa-solid fa-save`);
+    }
 
     let children = historyDiv.childNodes;
+    let savedChildren = savedDiv.childNodes;
 
     if (newHex) {
         for (let i = 0; i < children.length; i++) {
             children[i].setAttribute("class", "history-element");
+        }
+        for (let i = 0; i < savedChildren.length; i++) {
+            savedChildren[i].setAttribute("class", "history-element");
         }
 
         let colorSquare = document.createElement("div");
@@ -93,7 +107,7 @@ const updateDom = (hex, lumi, newHex) => {
                 children[i].setAttribute("class", "history-element");
             }
             colorSquare.setAttribute("class", "history-element-highlighted");
-            updateDom(hex, lumi, false);
+            updateDom(hex, lumi, false, false);
         });
         historyDiv.appendChild(colorSquare);
 
@@ -103,22 +117,82 @@ const updateDom = (hex, lumi, newHex) => {
     }
 }
 
+const updateSaved = (hex, lumi) => {
+    let existingSaved = JSON.parse(localStorage.getItem("saved"));
+
+    if (!existingSaved) {
+        existingSaved = []
+    }
+    if (existingSaved.length === 10) {
+        savedDiv.removeChild(savedDiv.firstChild);
+        existingSaved.shift();
+    }
+
+    existingSaved.push({hex, lumi});
+    localStorage.setItem("saved", JSON.stringify(existingSaved));
+
+    updateSavedDom(hex, lumi);
+}
+
+const updateSavedDom = (hex, lumi) => {
+    let colorSquare = document.createElement("div");
+    const children = savedDiv.childNodes;
+
+    colorSquare.setAttribute("alt", `#${hex}`);
+    colorSquare.setAttribute("style", `background-color: #${hex}`);
+    colorSquare.setAttribute("class", "history-element");    
+    colorSquare.addEventListener("click", () => {
+        for (let i = 0; i < children.length; i++) {
+            children[i].setAttribute("class", "history-element");
+        }
+        colorSquare.setAttribute("class", "history-element-highlighted");
+        updateDom(hex, lumi, false, true);
+    });
+    savedDiv.appendChild(colorSquare);
+}
+
+const iconClick = (icon, isCopy) => {
+    let classes = icon.getAttribute("class");
+
+    // If the hex has already been copied, prevent the copying from happening again.
+    if (classes.search("fa-check") === -1) {
+        if (isCopy) {
+            navigator.clipboard.writeText(hexInput.value);
+        } else {
+            updateSaved(hexInput.value.replace("#", ""), hexInput.getAttribute("lumi"));
+        }
+        icon.setAttribute("class", classes.replace(isCopy ? "fa-copy" : "fa-save", "fa-check"));
+    }
+
+    return;
+}
+
 // Event Listener for Changing Color and Copying
 document.getElementById("color-wrapper").addEventListener("click", (e) => {
 
     // Event Listener listens to the entire main element.
     // If a user clicks on the hex code or the copy icon, we don't want to change the color.
     if (e.target.id === "color-icon") {
-        let classes = copyIcon.getAttribute("class");
-
-        // If the hex has already been copied, prevent the copying from happening again.
-        if (classes.search("fa-check") === -1) {
-            navigator.clipboard.writeText(hexInput.value);
-            copyIcon.setAttribute("class", classes.replace("fa-copy", "fa-check"));
+        return iconClick(copyIcon, true);
+    }
+    if (e.target.id === "save-icon") {
+        if (e.target.getAttribute("class").search("fa-times") === -1) {
+            return iconClick(saveIcon, false);
+        } else {
+            let saved = JSON.parse(localStorage.getItem("saved")).filter(x => x.hex !== hexInput.value.replace("#", ""));
+            localStorage.setItem("saved", JSON.stringify(saved));
+            if (saved) {
+                const savedChildren = savedDiv.childNodes;
+                for (let i = 0; i < savedChildren.length; i++) {
+                    if (savedChildren[i].getAttribute("alt") === hexInput.value) {
+                        savedDiv.removeChild(savedChildren[i])
+                    }
+                }
+            }
+            hexCodeGeneration();
         }
-
-        return;
-    } else if (e.target.id === "hex-input") {
+    }
+    if (e.target.id === "hex-input") {
         return;
     }
 
@@ -138,5 +212,23 @@ historyHeader.addEventListener("click", () => {
     }
 });
 
+savedHeader.addEventListener("click", () => {
+    const classes = savedDiv.getAttribute("class");
+
+    if (classes.search("display-none") !== -1) {
+        savedDiv.setAttribute("class", "bottom-header");
+        savedHeader.setAttribute("style", "color: #ff6347");
+    } else {
+        savedDiv.setAttribute("class", "bottom-header display-none");
+        savedHeader.setAttribute("style", "")
+    }
+});
+
 // Random Color on Load
 hexCodeGeneration();
+
+if (existingSaved) {
+    for (let i = 0; i < existingSaved.length; i++) {
+        updateSavedDom(existingSaved[i].hex, existingSaved[i].lumi)
+    }
+}

@@ -58,7 +58,7 @@ main {
 }
 
 input {
-    margin-right: 10px;
+    margin-right: 15px;
     font-size: 25px;
     background-color: transparent !important;
     text-align: center;
@@ -66,9 +66,10 @@ input {
 
 i {
     font-size: 30px !important;
+    margin-right: 15px;
 }
 
-.fa-copy:hover {
+i:hover {
     transform: scale(1.2);
     cursor: pointer;
 }
