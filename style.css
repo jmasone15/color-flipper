@@ -138,4 +138,7 @@ i:hover {
         justify-content: center;
         padding-bottom: 0px 10px;
     }
+    #save-icon {
+        display: none;
+    }
 }
