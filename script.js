@@ -10,7 +10,12 @@ const savedHeader = document.getElementById("color-saved");
 
 // History and Saved Hex Arrays
 let hexHistory = [];
-let hexSaved = JSON.parse(localStorage.getItem("saved"));
+let hexSaved = [];
+
+let savedData = JSON.parse(localStorage.getItem("saved"));
+if (savedData) {
+    hexSaved.push(...savedData)
+}
 
 // Functions to determine if on mobile or not. Stolen from detectmobilebrowsers.com.
 window.mobileAndTabletCheck = function () {
